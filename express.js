@@ -1,37 +1,54 @@
 const express = require('express');
+const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const fs = require('fs');
 
 const app = express();
 
 const PORT = process.env.PORT || 8080;
-const mainDir = path.join(__dirname, "/public");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('public'));
 
 //Routes
-app.get('*', (req, res) => {
-  res.sendFile(path.join(mainDir, 'index.html'));
-});
-
 app.get('/notes', (req, res) => {
-  res.sendFile(path.join(mainDir, 'notes.html'));
+  res.sendFile(path.join(__dirname, './public/notes.html'));
 });
 
 app.get('/api/notes', (req, res) => {
-  const notes = JSON.parse(fs.readFileSync("./db/db.json", "utf8"));
+  const notes = getAllNotes()
+  res.json(notes);
+});
+
+app.get('/api/notes/:id', (req, res) => {
+  const notes = getAllNotes()
+  const note = notes.filter(obj => {
+    return obj.id === req.params.id;
+  });
+  res.json(note);
+});
+
+app.post('/api/notes', (req, res) => {
+  const notes = getAllNotes()
+  let newNote = req.body;
+  const newNoteId = uuidv4();
+  newNote.id = newNoteId;
+  notes.push(newNote);
+
+  fs.writeFileSync("./db/db.json", JSON.stringify(notes));
   res.json(notes);
 })
 
-app.get('/api/notes/:id', (req, res) => {
+function getAllNotes() {
   const notes = JSON.parse(fs.readFileSync("./db/db.json", "utf8"));
-  const note = notes.filter(obj => {
-    return obj.id === req.params.id;
-  })
-  res.json(note);
-})
+  console.log(notes);
+  return notes;
+}
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, './public/index.html'));
+});
 
 app.listen(PORT, () => {
   console.log(`App listening on PORT: ${PORT}`);
