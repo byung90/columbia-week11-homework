@@ -17,7 +17,8 @@ This is a note taker that I completed from a starter code. Users will be able to
 Install all dependencies using npm i
 
 ## Usage
-
+![screenshot1](./assets/screenshot1.png)
+![screenshot1](./assets/screenshot2.png)
 1. Go to: https://sheltered-caverns-54438.herokuapp.com/
 2. Click on 'Get Started' CTA to enter notes.
 3. All the saved notes are on the left side of the page.
