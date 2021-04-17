@@ -17,12 +17,12 @@ app.get('/notes', (req, res) => {
 });
 
 app.get('/api/notes', (req, res) => {
-  const notes = getAllNotes()
+  const notes = getAllNotes();
   res.json(notes);
 });
 
 app.get('/api/notes/:id', (req, res) => {
-  const notes = getAllNotes()
+  const notes = getAllNotes();
   const note = notes.filter(obj => {
     return obj.id === req.params.id;
   });
@@ -30,7 +30,7 @@ app.get('/api/notes/:id', (req, res) => {
 });
 
 app.post('/api/notes', (req, res) => {
-  const notes = getAllNotes()
+  const notes = getAllNotes();
   let newNote = req.body;
   const newNoteId = uuidv4();
   newNote.id = newNoteId;
@@ -39,6 +39,17 @@ app.post('/api/notes', (req, res) => {
   fs.writeFileSync("./db/db.json", JSON.stringify(notes));
   res.json(notes);
 })
+
+app.delete('/api/notes/:id', (req, res) => {
+  const notes = getAllNotes();
+  const noteId = req.params.id;
+  const newNotes = notes.filter(obj => {
+    return obj.id !== noteId;
+  });
+  fs.writeFileSync("./db/db.json", JSON.stringify(newNotes));
+  res.json(newNotes);
+})
+
 
 function getAllNotes() {
   const notes = JSON.parse(fs.readFileSync("./db/db.json", "utf8"));
